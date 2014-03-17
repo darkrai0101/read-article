@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="lib/angular.min.js"></script>
+    <script src="lib/angular-sanitize.js"></script>
+    <script src="lib/angular-snap.js"></script>
+    <script type="text/javascript" src="lib/snap.min.js"></script>
+    <script src="js/data.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" href="css/lib/snap.css">
+    <link rel="stylesheet" href="css/lib/angular-snap.css">
+  </head>
+  <body>
+    <div id="readBook" ng-app="ngReadBook">
+      <snap-drawer>
+  	    <div id="rb-siderbar">
+  			   <ul>
+              <li>Menu 2</li>
+              <li>Menu 2</li>   
+              <li>Menu 2</li>
+              <li>Menu 2</li>
+           </ul>
+  	    </div>
+    </snap-drawer>
+    <snap-content>
+		<div id="rb-main" class="main">
+			<div id="rb-menu">
+				
+			</div>
+			<div class="rb-content">
+				<div class="post-content" ng-controller="postContentController">
+					<div ng-bind-html="postContent"></div>
+				</div>
+			</div>
+		</div>
+  </snap-content>
+	</div>
+    <script type="text/javascript">
+    	var app = angular.module('ngReadBook',['ngSanitize','snap']);
+
+    	app.controller('postContentController', ['$scope','$window',function($scope, $window){
+    		$scope.postContent = $window.postContent;
+    	}]);
+    </script>
+  </body>
+</html>
