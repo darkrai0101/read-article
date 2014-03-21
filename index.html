@@ -1,47 +1,114 @@
 <!doctype html>
-<html>
+<html ng-app="readArticleApp">
   <head>
+    <title>Mạng Văn Học</title>
+    <meta charset="UTF-8">
     <script src="lib/angular.min.js"></script>
     <script src="lib/angular-sanitize.js"></script>
+    <script src="lib/angular-route.min.js"></script>
+    <script src="lib/snap.min.js"></script>
     <script src="lib/angular-snap.js"></script>
     <script type="text/javascript" src="lib/snap.min.js"></script>
     <script src="js/data.js"></script>
+    <script type="text/javascript">
+      'use strict';
+      var app =  angular.module('readArticleApp', ['snap','ngSanitize', 'ngRoute']);
+
+      app.config(['$routeProvider', function($routeProvider) {
+           $routeProvider
+            .when('/',{
+              templateUrl : 'views/list_article.html',
+              controller : 'listArticleController',
+              controllerAs : 'list'
+            })
+            .when('/article/:articleId', {
+              templateUrl : 'views/article.html',
+              controller : 'readArticleController',
+              controllerAs : 'article'
+            });
+      }]);
+
+      app.config(function(snapRemoteProvider) {
+        snapRemoteProvider.globalOptions = {
+              disable: 'right',
+              touchToDrag: false
+            }
+      });
+
+      app.controller('mainCtrl', function($scope, snapRemote){
+        snapRemote.getSnapper().then(function(snapper){
+          snapper.on('open',function(){
+            $scope.disableBoxControl = true;
+            $scope.$apply();
+          });
+
+          snapper.on('close', function(){
+            $scope.disableBoxControl = false;
+            $scope.$apply();
+          });
+        })
+      });
+
+      app.controller('listArticleController', function($http){
+          var that = this;
+          $http.get('http://localhost:3000/article').
+            success(function(data, status, headers, config) {
+              console.log('success', data);
+              that.articles = data;
+            }).
+            error(function(data, status, headers, config) {
+              console.log('error', data);
+            });
+      });
+
+      app.controller('readArticleController', ['$window','$sce','$routeParams','$http',function($window, $sce, $routeParams, $http){
+        var that = this;
+        $http.get('http://localhost:3000/article/'+$routeParams.articleId).
+          success(function(data, status, headers, config) {
+              console.log('success', data);
+              that.title = data.title;
+              that.subtitle = data.subtitle;
+              that.articleContent = $sce.trustAsHtml(data.content);
+          }).
+          error(function(data, status, headers, config) {
+              console.log('error', data);
+          });
+      }]);
+
+    </script>
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/article.css">
+    <link rel="stylesheet" type="text/css" href="css/sider.css">
     <link rel="stylesheet" href="css/lib/snap.css">
     <link rel="stylesheet" href="css/lib/angular-snap.css">
   </head>
-  <body>
-    <div id="readBook" ng-app="ngReadBook">
-      <snap-drawer>
-  	    <div id="rb-siderbar">
-  			   <ul>
-              <li>Menu 2</li>
-              <li>Menu 2</li>   
-              <li>Menu 2</li>
-              <li>Menu 2</li>
-           </ul>
-  	    </div>
+  <body ng-controller="mainCtrl">
+    <div class="fixed">
+      <span ng-class="{'box_control_disable':disableBoxControl}" class="box_control" snap-toggle="left"></span>
+    </div>
+    <snap-drawer>
+      <div id="sider" class="sider">
+        <ul class="sider_list">
+          <li class="sider_list_item"><a class="sider_list_item_btn" href="#">Home</a></li>
+          <li class="sider_list_item"><a class="sider_list_item_btn" href="#">Collections</a></li>
+          <li class="sider_list_item">
+            <a class="sider_list_item_btn" href="#">Table of content</a>
+            <ul class="toc_list">
+                <li class="toc_list_item"><a class="toc_list_item_btn" href="#chapter1">Chapter 1</a></li>
+                <li class="toc_list_item"><a class="toc_list_item_btn" href="#chapter2">Chapter 2</a></li>
+                <li class="toc_list_item"><a class="toc_list_item_btn" href="#chapter3">Chapter 3</a></li>
+                <li class="toc_list_item"><a class="toc_list_item_btn" href="#chapter4">Chapter 4</a></li>
+                <li class="toc_list_item"><a class="toc_list_item_btn" href="#chapter5">Chapter 5</a></li>
+                <li class="toc_list_item"><a class="toc_list_item_btn" href="#chapter6">Chapter 6</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
     </snap-drawer>
     <snap-content>
-		<div id="rb-main" class="main">
-			<div id="rb-menu">
-				
-			</div>
-			<div class="rb-content">
-				<div class="post-content" ng-controller="postContentController">
-					<div ng-bind-html="postContent"></div>
-				</div>
-			</div>
-		</div>
+      <div ng-view id="wrapper">
+      </div>
   </snap-content>
-	</div>
-    <script type="text/javascript">
-    	var app = angular.module('ngReadBook',['ngSanitize','snap']);
-
-    	app.controller('postContentController', ['$scope','$window',function($scope, $window){
-    		$scope.postContent = $window.postContent;
-    	}]);
-    </script>
   </body>
 </html>

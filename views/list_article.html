@@ -1,0 +1,17 @@
+<div id="menu" class="top_bar">
+  <div class="top_bar_block align_left">
+    
+  </div>
+  <div class="top_bar_block align_right">
+    
+
+  </div>
+</div>
+<div id="container">
+<div ng-repeat="article in list.articles">
+	<a href="/#/article/{{ article._id }}">
+		<h3 id="article_title">{{ article.title }}</h3>
+      	<p id="article_subtitle"/>{{ article.subtitle }}</p>
+	</a>
+</div>
+</div>

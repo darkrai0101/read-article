@@ -1,0 +1,17 @@
+<div id="menu" class="top_bar">
+  <div class="top_bar_block align_left">
+    
+  </div>
+  <div class="top_bar_block align_right">
+    <button class="btn btn-bookmark btn-normal" title="Bookmark">Bookmark</button>
+    <button class="btn btn-share btn-normal" title="Share">Share</button>
+    <button class="btn btn-favorite btn-primary" title="Favorite">Favorite</button>
+  </div>
+</div>
+<div id="container">
+		<div class="post-content" ng-controller="readArticleController">
+      <h1 id="article_title">{{ article.title }}</h1>
+      <h2 id="article_subtitle"/>{{ article.subtitle }}</h2>
+			<div spellcheck="false" id="article_content" ng-bind-html="article.articleContent"></div>
+		</div>
+</div>
