@@ -12,6 +12,7 @@
     <script src="js/data.js"></script>
     <script type="text/javascript">
       'use strict';
+      var domain = 'http://192.168.78.140:3000';
       var app =  angular.module('readArticleApp', ['snap','ngSanitize', 'ngRoute']);
 
       app.config(['$routeProvider', function($routeProvider) {
@@ -51,7 +52,7 @@
 
       app.controller('listArticleController', function($http){
           var that = this;
-          $http.get('http://localhost:3000/article').
+          $http.get(domain+'/article').
             success(function(data, status, headers, config) {
               console.log('success', data);
               that.articles = data;
@@ -63,7 +64,7 @@
 
       app.controller('readArticleController', ['$window','$sce','$routeParams','$http',function($window, $sce, $routeParams, $http){
         var that = this;
-        $http.get('http://localhost:3000/article/'+$routeParams.articleId).
+        $http.get(domain+'/article/'+$routeParams.articleId).
           success(function(data, status, headers, config) {
               console.log('success', data);
               that.title = data.title;
